@@ -41,7 +41,6 @@ def create_app(test_config=None):
     @TODO: 
     Create an endpoint to handle GET requests 
     for all available categories.
-    GET /categories in ../../frontend/src/components/FormView.js
     '''
     @app.route("/categories")
     def get_all_categories():
@@ -155,6 +154,23 @@ def create_app(test_config=None):
     only question that include that string within their question. 
     Try using the word "title" to start. 
     '''
+    @app.route('/searchquestions', methods=['POST'])
+    def search_quetions():
+        search_body = request.get_json()
+        search_term = search_body.get('searchTerm')
+        null = ''
+        if search_term is null:
+            print('searchTerm is empty or couldnt read search term')
+            abort(406)
+        else:
+            print('searchTerm is ' + search_term)
+            questions = Question.query.filter(Question.question.ilike('%' + search_term + '%'))
+            question_list = [question.format() for question in questions]
+            print(question_list)
+            return jsonify({
+                'total_questions': len(question_list),
+                'questions': question_list
+            })
 
     '''
     @TODO: 
