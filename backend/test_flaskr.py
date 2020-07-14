@@ -43,7 +43,7 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-    '''
+
     def test_get_all_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
@@ -179,7 +179,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertIsInstance(data['questions'], list)
         self.assertIsInstance(data['total_questions'], int)
         self.assertEqual(data['current_category'], 1)
-    '''
+    
 
     def test_get_questions_by_category(self):
 
