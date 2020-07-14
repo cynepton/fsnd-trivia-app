@@ -135,6 +135,14 @@ def create_app(test_config=None):
         answer = new_question.get('answer')
         difficulty = new_question.get('difficulty')
         category = new_question.get('category')
+        if question == None:
+            abort(400)
+        if answer == None:
+            abort(400)
+        if difficulty == None:
+            abort(400)
+        if category == None:
+            abort(400)
         try:
             new_entry = Question(question, answer, category, difficulty)
             new_entry.insert()
