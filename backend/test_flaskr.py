@@ -66,11 +66,26 @@ class TriviaTestCase(unittest.TestCase):
     def test_404_error_requesting_questions_beyond_valid_page(self):
         res = self.client().get('/questions?page=100')
         data = json.loads(res.data)
-    
+
+        print('---------get paginated questions test error 404-----------')
+        print(data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'Resource not found')
+    
+    def test_delete_question_by_id(self):
+        res = self.client().delete('/questions/2')
+        data = json.loads(res.data)
+
+        print('---------delete a question test -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['deleted'], 2)
+
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
