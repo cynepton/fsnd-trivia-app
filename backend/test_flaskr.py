@@ -98,6 +98,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'Bad Request')
 
+    def test_post_new_question(self):
+        question = self.new_question
+
+        res = self.client().post('/questions', json=question)
+        data = json.loads(res.data)
+        print('---------Posted a new question -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsInstance(data['question'], dict)
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
