@@ -110,6 +110,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
         self.assertIsInstance(data['question'], dict)
 
+    def test_post_new_question_without_content(self):
+
+        res = self.client().post('/questions', json={})
+        data = json.loads(res.data)
+        print('---------Posted a new question without content-----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['error'], 400)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['message'], 'Bad Request')
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
