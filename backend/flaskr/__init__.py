@@ -165,17 +165,22 @@ def create_app(test_config=None):
     @app.route('/searchquestions', methods=['POST'])
     def search_quetions():
         search_body = request.get_json()
+        if search_body is None:
+            print('No search term received')
+            abort(400)
         search_term = search_body.get('searchTerm')
         null = ''
-        if search_term is null:
+        if search_term == null:
             print('searchTerm is empty or couldnt read search term')
             abort(406)
+        # elif search_term is None:
         else:
             print('searchTerm is ' + search_term)
             questions = Question.query.filter(Question.question.ilike('%' + search_term + '%'))
             question_list = [question.format() for question in questions]
             print(question_list)
             return jsonify({
+                'success': True,
                 'total_questions': len(question_list),
                 'questions': question_list
             })
@@ -198,6 +203,7 @@ def create_app(test_config=None):
             print(question_list)
               
             return jsonify({
+                'success': True,
                 'questions': question_list,
                 'total_questions': total_questions,
                 'current_category': category_id
@@ -291,6 +297,14 @@ def create_app(test_config=None):
         'error': 404,
         'message': 'Resource not found'
         }), 404
+
+    @app.errorhandler(406)
+    def not_found(error):
+        return jsonify({
+        'success': False,
+        'error': 406,
+        'message': 'Not Acceptable'
+        }), 406
 
     @app.errorhandler(422)
     def unprocessable(error):

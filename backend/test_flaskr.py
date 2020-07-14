@@ -24,6 +24,9 @@ class TriviaTestCase(unittest.TestCase):
             'difficulty': 3,
             'category': 5
         }
+        self.search_term = {
+            'searchTerm': 'what'
+        }
 
         # binds the app to the current context
         with self.app.app_context():
@@ -40,6 +43,7 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
+    '''
     def test_get_all_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
@@ -74,7 +78,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'Resource not found')
     
-    '''
+    
     def test_delete_question_by_id(self):
         res = self.client().delete('/questions/2')
         data = json.loads(res.data)
@@ -85,7 +89,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['deleted'], 2)
-    '''
+    
     def test_delete_question_by_id_not_existing(self):
         res = self.client().delete('/questions/100')
         data = json.loads(res.data)
@@ -121,6 +125,74 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['error'], 400)
         self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'Bad Request')
+
+    def test_search_for_question(self):
+        search_term = self.search_term
+
+        res = self.client().post('/searchquestions', json=search_term)
+        data = json.loads(res.data)
+        print('---------Searched for a question -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsInstance(data['questions'], list)
+        self.assertIsInstance(data['total_questions'], int)
+    
+    def test_search_for_question_with_empty_string(self):
+        search_term = {
+            'searchTerm': ''
+        }
+
+        res = self.client().post('/searchquestions', json=search_term)
+        data = json.loads(res.data)
+        print('---------Searched for a question with an empty string -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 406)
+        self.assertEqual(data['error'], 406)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['message'], 'Not Acceptable')
+
+    
+    def test_search_for_question_with_no_content(self):
+
+        res = self.client().post('/searchquestions')
+        data = json.loads(res.data)
+        print('---------Searched for a question with no content -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['error'], 400)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['message'], 'Bad Request')
+
+    def test_get_questions_by_category(self):
+
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+        print('--------- Get questions by category -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsInstance(data['questions'], list)
+        self.assertIsInstance(data['total_questions'], int)
+        self.assertEqual(data['current_category'], 1)
+    '''
+
+    def test_get_questions_by_category(self):
+
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+        print('--------- Get questions by category -----------------------')
+        print(data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsInstance(data['questions'], list)
+        self.assertIsInstance(data['total_questions'], int)
+        self.assertEqual(data['current_category'], 1)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
