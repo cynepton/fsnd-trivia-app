@@ -44,19 +44,33 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/categories')
         data = json.loads(res.data)
 
+        print('---------get all categories test response-----------')
         print(data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
+        self.assertTrue(data['success'])
         self.assertGreaterEqual(len(data['categories']), 0)
-    '''
-    def test_404_sent_requesting_beyond_valid_page(self):
-        res = self.client().get('/books?page=1000', json={'rating': 1})
+    
+    def test_get_paginated_questions(self):
+        res = self.client().get('/questions?page=1')
         data = json.loads(res.data)
 
+        print('---------get paginated questions test response-----------')
+        print(data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertIsInstance(data['questions'], list)
+        self.assertLessEqual(len(data['questions']), 10)
+        self.assertIsInstance(data['total_questions'], int)
+        self.assertIsInstance(data['categories'], dict)
+
+    def test_404_error_requesting_questions_beyond_valid_page(self):
+        res = self.client().get('/questions?page=100')
+        data = json.loads(res.data)
+    
         self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found')
-    '''
+        self.assertEqual(data['error'], 404)
+        self.assertFalse(data['success'])
+        self.assertEqual(data['message'], 'Resource not found')
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
