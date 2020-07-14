@@ -209,6 +209,59 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not. 
     '''
+    @app.route('/quizzes', methods=['POST'])
+    def post_quizzes():
+        body_data = request.get_json()
+        previous_questions = body_data.get('previous_questions')
+        quiz_category = body_data.get('quiz_category')
+        category_id = quiz_category.get('id')
+        print('___________________________________________________')
+        print('Previous questions')
+        print(previous_questions)
+        print('___________________________________________________')
+        pq_len = len(previous_questions)
+
+        if pq_len == 0:
+            print('-----------------------------------------------')
+            print('First Question')
+            print('-----------------------------------------------')
+            if category_id == 0:
+                next_question = Question.query.first()
+            else:
+                next_question = Question.query.filter(Question.category == category_id).first()
+        else:
+            if category_id == 0:
+                all_questions = Question.query.filter(Question.id.notin_(previous_questions)).all()
+                if len(all_questions) == 0:
+                    print('-----------------------------------------------')
+                    print('No more Questions')
+                    print('-----------------------------------------------')
+                    return jsonify({
+                        'success': True,
+                        'question': False
+                    })
+                else:
+                    next_question = all_questions[0]
+            else:
+                all_questions = Question.query.filter(Question.id.notin_(previous_questions), Question.category == category_id).all()
+                if len(all_questions) == 0:
+                    print('-----------------------------------------------')
+                    print('No more Questions')
+                    print('-----------------------------------------------')
+                    return jsonify({
+                        'success': True,
+                        'question': False
+                    })
+                else:
+                    next_question = all_questions[0]
+                    
+        print('-----------------------------------------------')
+        print(next_question.format())
+        print('-----------------------------------------------')
+        return jsonify({
+            'success': True,
+            'question': next_question.format()
+        })
 
     '''
     @TODO: 
