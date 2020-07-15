@@ -64,7 +64,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 
 ## Endpoints
 
-- [GET `/categories`](#/categories)
+- [GET `/categories`](https://github.com/cynepton/fsnd-trivia-app/tree/dev/backend#categories)
 - GET `/questions`
 - POST `/questions`
 - DELETE `/questions/<int:question_id>`
