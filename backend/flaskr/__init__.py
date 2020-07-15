@@ -8,15 +8,17 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
 def paginate_books(request, selection):
     page = request.args.get('page', 1, type=int)
-    start =  (page - 1) * QUESTIONS_PER_PAGE
-    end = start +   QUESTIONS_PER_PAGE
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
 
     questions = [question.format() for question in selection]
     current_questions = questions[start:end]
 
     return current_questions
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -24,7 +26,8 @@ def create_app(test_config=None):
     setup_db(app)
 
     '''
-    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    @TODO: Set up CORS. Allow '*' for origins.
+    Delete the sample route after completing the TODOs
     '''
     #cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
@@ -33,13 +36,15 @@ def create_app(test_config=None):
     '''
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers',
+            'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+            'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
     '''
-    @TODO: 
-    Create an endpoint to handle GET requests 
+    @TODO:
+    Create an endpoint to handle GET requests
     for all available categories.
     '''
     @app.route("/categories")
@@ -54,16 +59,17 @@ def create_app(test_config=None):
         })
 
     '''
-    @TODO: 
-    Create an endpoint to handle GET requests for questions, 
-    including pagination (every 10 questions). 
-    This endpoint should return a list of questions, 
+    @TODO:
+    Create an endpoint to handle GET requests for questions,
+    including pagination (every 10 questions).
+    This endpoint should return a list of questions,
     number of total questions, current category, categories. 
 
     TEST: At this point, when you start the application
     you should see questions and categories generated,
-    ten questions per page and pagination at the bottom of the screen for three pages.
-    Clicking on the page numbers should update the questions. 
+    ten questions per page,
+    and pagination at the bottom of the screen for three pages.
+    Clicking on the page numbers should update the questions.
     '''
     @app.route("/questions")
     def get_all_questions():
@@ -73,13 +79,13 @@ def create_app(test_config=None):
 
         if len(current_questions) == 0:
             abort(404)
-        
+
         # categories
         categories = {}
         all_categories = Category.query.order_by(Category.id).all()
         for each_category in all_categories:
             categories[each_category.id] = each_category.type
-        
+
         return jsonify({
             'success': True,
             'questions': current_questions,
@@ -92,7 +98,8 @@ def create_app(test_config=None):
     @TODO: 
     Create an endpoint to DELETE question using a question ID. 
 
-    TEST: When you click the trash icon next to a question, the question will be removed.
+    TEST: When you click the trash icon next to a question, 
+    the question will be removed.
     This removal will persist in the database and when you refresh the page. 
     '''
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
@@ -100,7 +107,7 @@ def create_app(test_config=None):
         try:
             question = Question.query.filter(Question.id == question_id).one_or_none()
             # leng = len(question)
-            # req_len = 1 
+            # req_len = 1
             # print(question, leng, req_len)
             print(question)
             if question is None:
@@ -113,7 +120,7 @@ def create_app(test_config=None):
                     'success': True,
                     'deleted': question_id
                 })
-                
+
         except Exception:
             print('question delete failed completely')
             abort(400)
@@ -135,13 +142,13 @@ def create_app(test_config=None):
         answer = new_question.get('answer')
         difficulty = new_question.get('difficulty')
         category = new_question.get('category')
-        if question == None:
+        if question is None:
             abort(400)
-        if answer == None:
+        if answer is None:
             abort(400)
-        if difficulty == None:
+        if difficulty is None:
             abort(400)
-        if category == None:
+        if category is None:
             abort(400)
         try:
             new_entry = Question(question, answer, category, difficulty)
@@ -200,7 +207,7 @@ def create_app(test_config=None):
             question_list = [question.format() for question in selection]
             total_questions = len(question_list)
             print(question_list)
-              
+
             return jsonify({
                 'success': True,
                 'questions': question_list,
@@ -315,4 +322,3 @@ def create_app(test_config=None):
     
 
     return app
-
