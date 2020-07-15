@@ -135,6 +135,14 @@ def create_app(test_config=None):
         answer = new_question.get('answer')
         difficulty = new_question.get('difficulty')
         category = new_question.get('category')
+        if question == None:
+            abort(400)
+        if answer == None:
+            abort(400)
+        if difficulty == None:
+            abort(400)
+        if category == None:
+            abort(400)
         try:
             new_entry = Question(question, answer, category, difficulty)
             new_entry.insert()
@@ -157,9 +165,12 @@ def create_app(test_config=None):
     @app.route('/searchquestions', methods=['POST'])
     def search_quetions():
         search_body = request.get_json()
+        if search_body is None:
+            print('No search term received')
+            abort(400)
         search_term = search_body.get('searchTerm')
         null = ''
-        if search_term is null:
+        if search_term == null:
             print('searchTerm is empty or couldnt read search term')
             abort(406)
         else:
@@ -168,6 +179,7 @@ def create_app(test_config=None):
             question_list = [question.format() for question in questions]
             print(question_list)
             return jsonify({
+                'success': True,
                 'total_questions': len(question_list),
                 'questions': question_list
             })
@@ -190,6 +202,7 @@ def create_app(test_config=None):
             print(question_list)
               
             return jsonify({
+                'success': True,
                 'questions': question_list,
                 'total_questions': total_questions,
                 'current_category': category_id
@@ -268,21 +281,38 @@ def create_app(test_config=None):
     Create error handlers for all expected errors 
     including 404 and 422. 
     '''
-    @app.errorhandler(422)
-    def unprocessable(error):
+    @app.errorhandler(400)
+    def not_found(error):
         return jsonify({
-        "success": False,
-        "error": 422,
-        "message": "unprocessable"
-        }), 422
+        'success': False,
+        'error': 400,
+        'message': 'Bad Request'
+        }), 400
 
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
-        "success": False,
-        "error": 404,
-        "message": "Resource not found"
+        'success': False,
+        'error': 404,
+        'message': 'Resource not found'
         }), 404
+
+    @app.errorhandler(406)
+    def not_found(error):
+        return jsonify({
+        'success': False,
+        'error': 406,
+        'message': 'Not Acceptable'
+        }), 406
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+        'success': False,
+        'error': 422,
+        'message': 'unprocessable'
+        }), 422
+    
 
     return app
 
