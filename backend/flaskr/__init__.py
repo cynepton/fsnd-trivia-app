@@ -173,7 +173,6 @@ def create_app(test_config=None):
         if search_term == null:
             print('searchTerm is empty or couldnt read search term')
             abort(406)
-        # elif search_term is None:
         else:
             print('searchTerm is ' + search_term)
             questions = Question.query.filter(Question.question.ilike('%' + search_term + '%'))
