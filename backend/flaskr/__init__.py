@@ -114,7 +114,7 @@ def create_app(test_config=None):
                     'deleted': question_id
                 })
                 
-        except:
+        except Exception:
             print('question delete failed completely')
             abort(400)
 
@@ -150,7 +150,7 @@ def create_app(test_config=None):
                 'success': True,
                 'question': new_entry.format()
             })
-        except:
+        except Exception:
             abort(400)
     '''
     @TODO: 
@@ -207,7 +207,7 @@ def create_app(test_config=None):
                 'total_questions': total_questions,
                 'current_category': category_id
             })
-        except:
+        except Exception:
             abort(400)
 
 
